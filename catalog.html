@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Disease Catalog - Tea AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Header Style */
+        header.leaf-header {
+            position: relative;
+            background-image: url('bg-daun.jpg'); 
+            background-size: cover;
+            background-position: center;
+        }
+        header.leaf-header::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(0, 20, 0, 0.7), rgba(0, 0, 0, 0.2)); 
+            z-index: 1;
+        }
+        header.leaf-header > * { position: relative; z-index: 2; }
+
+        /* Efek Fokus saat klik Learn More dari Index */
+        :target {
+            border: 4px solid #16a34a !important;
+            box-shadow: 0 0 30px rgba(22, 163, 74, 0.6);
+            animation: pulseHighlight 2s infinite;
+            scroll-margin-top: 100px; /* Supaya nggak mentok ke atas pas scroll otomatis */
+        }
+
+        @keyframes pulseHighlight {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .card-item { transition: all 0.3s ease; }
+        .card-item:hover { transform: translateY(-10px); }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <header class="leaf-header p-10 text-white shadow-lg">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="logo-binus.jpg" alt="Logo BINUS" 
+             class="h-16 w-auto object-contain" 
+             style="filter: drop-shadow(0px 0px 1px white) contrast(1.2);">
+                <h1 class="text-3xl font-black italic uppercase tracking-tighter">Tea Catalog</h1>
+            </div>
+            <nav class="flex gap-6 text-xs font-bold uppercase tracking-widest">
+                <a href="index.html" class="hover:text-green-300 transition-colors">Detector</a>
+                <a href="catalog.html" class="border-b-2 border-white pb-1">Catalog</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto py-16 px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-black text-gray-800 mb-4 uppercase italic">Tea Disease Encyclopedia</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto">Database lengkap karakteristik penyakit daun teh untuk mendukung ketahanan panen perkebunan.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <div id="cat-Healthy" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-green-100 flex items-center justify-center text-green-500">
+                    <i class="fas fa-check-circle text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-green-100 text-green-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Safe Condition</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Healthy</h3>
+                    <p class="text-gray-500 text-sm mt-4">Kondisi daun teh hijau segar merata tanpa bercak. Pertumbuhan tanaman menunjukkan metabolisme yang optimal dan bebas patogen.</p>
+                </div>
+            </div>
+
+            <div id="cat-Algal leaf spot" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-rose-100 flex items-center justify-center text-rose-500">
+                    <i class="fas fa-certificate text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Algae Infection</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Algal Leaf Spot</h3>
+                    <p class="text-gray-500 text-sm mt-4">Terdapat bercak-bercak menonjol berwarna oranye atau kemerahan pada permukaan daun teh akibat patogen Cephaleuros virescens.</p>
+                </div>
+            </div>
+
+            <div id="cat-Black Blight" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-zinc-200 flex items-center justify-center text-zinc-700">
+                    <i class="fas fa-disease text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-zinc-200 text-zinc-700 text-[10px] font-bold px-2 py-1 rounded uppercase">Fungal Attack</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Black Blight</h3>
+                    <p class="text-gray-500 text-sm mt-4">Area hitam pekat yang menyebar dengan cepat pada daun teh yang terinfeksi akibat kondisi lingkungan yang hangat dan sangat lembap.</p>
+                </div>
+            </div>
+
+            <div id="cat-Brown Blight" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-amber-100 flex items-center justify-center text-amber-600">
+                    <i class="fas fa-leaf text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-amber-100 text-amber-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Fungal Attack</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Brown Blight</h3>
+                    <p class="text-gray-500 text-sm mt-4">Bercak cokelat muda hingga tua yang biasanya berawal dari tepi atau ujung daun, umumnya menyerang daun yang lebih tua.</p>
+                </div>
+            </div>
+
+            <div id="cat-Gray Blight" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-slate-200 flex items-center justify-center text-slate-500">
+                    <i class="fas fa-spa text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-slate-200 text-slate-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Fungal Attack</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Gray Blight</h3>
+                    <p class="text-gray-500 text-sm mt-4">Bercak berwarna abu-abu pada daun dengan batas cokelat gelap di sekelilingnya, disebabkan oleh jamur Pestalotiopsis theae.</p>
+                </div>
+            </div>
+
+            <div id="cat-Green Mirid Bug" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-lime-100 flex items-center justify-center text-lime-600">
+                    <i class="fas fa-bug text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-lime-100 text-lime-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Pest Attack</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Green Mirid Bug</h3>
+                    <p class="text-gray-500 text-sm mt-4">Serangga penghisap cairan daun yang menyebabkan daun terlihat berlubang-lubang kecil, mengerut, dan bentuknya tidak beraturan.</p>
+                </div>
+            </div>
+
+            <div id="cat-Red Scab" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-red-100 flex items-center justify-center text-red-600">
+                    <i class="fas fa-project-diagram text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Fungal Attack</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Red Scab</h3>
+                    <p class="text-gray-500 text-sm mt-4">Terdapat bercak-bercak kasar berwarna merah gelap atau keunguan pada sepanjang tulang daun akibat jamur Elsinoe theae.</p>
+                </div>
+            </div>
+
+            <div id="cat-Red spot" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-red-50 flex items-center justify-center text-red-500">
+                    <i class="fas fa-circle text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-red-100 text-red-500 text-[10px] font-bold px-2 py-1 rounded uppercase">High Humidity</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Red Spot</h3>
+                    <p class="text-gray-500 text-sm mt-4">Titik-titik kecil berwarna merah terang yang tersebar luas di permukaan daun, sangat dipicu oleh tingkat kelembapan yang tinggi.</p>
+                </div>
+            </div>
+
+            <div id="cat-Spider Mite" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-orange-100 flex items-center justify-center text-orange-500">
+                    <i class="fas fa-spider text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Parasite</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">Spider Mite</h3>
+                    <p class="text-gray-500 text-sm mt-4">Serangan tungau laba-laba menyebabkan daun menjadi kusam, menguning kecokelatan, serta terdapat jaring halus di bawah daun.</p>
+                </div>
+            </div>
+
+            <div id="cat-White Spot" class="card-item bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-indigo-100 flex items-center justify-center text-indigo-400">
+                    <i class="fas fa-snowflake text-6xl"></i>
+                </div>
+                <div class="p-8">
+                    <span class="bg-indigo-100 text-indigo-500 text-[10px] font-bold px-2 py-1 rounded uppercase">Early Infection</span>
+                    <h3 class="text-2xl font-black text-gray-800 mt-2 italic">White Spot</h3>
+                    <p class="text-gray-500 text-sm mt-4">Timbul bercak-bercak putih berbintik kecil pada helaian daun teh, sering terjadi sebagai infeksi awal pada cuaca berkabut tebal.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 py-10 text-center text-[10px] text-gray-500 uppercase tracking-widest">
+        <p>© 2026 Tea AI Project • BINUS University</p>
+    </footer>
+
+</body>
+</html>

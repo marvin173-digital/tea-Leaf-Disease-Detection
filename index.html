@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tea Disease Detection UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        header.leaf-header {
+            position: relative;
+            background-image: url('bg-daun.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        header.leaf-header::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(0, 20, 0, 0.6), rgba(0, 0, 0, 0)); 
+            z-index: 1;
+        }
+        header.leaf-header > * {
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+   <header class="leaf-header p-10 text-white shadow-lg">
+    <div class="max-w-6xl mx-auto header-content"> 
+        <img src="logo-binus.jpg" alt="Logo BINUS" 
+             class="h-16 w-auto object-contain" 
+             style="filter: drop-shadow(0px 0px 1px white) contrast(1.2);">
+        
+        <div>
+            <h1 class="text-3xl font-extrabold italic">Tea Disease Detection</h1>
+            <p class="text-white mt-1 text-sm font-medium">AI-Powered Disease Identification for Tea Leaves</p>
+        </div>
+        <nav class="flex gap-6 text-xs font-bold uppercase tracking-widest">
+    <a href="index.html" class="border-b-2 border-white pb-1">Detector</a>
+    <a href="catalog.html" class="hover:text-green-300 transition-colors opacity-70">Catalog</a>
+        </nav>
+    </div>
+</header>
+
+    <main class="max-w-6xl mx-auto py-12 px-4 flex flex-col lg:flex-row gap-8">
+        
+        <div class="flex-1 bg-white p-8 rounded-2xl shadow-md border border-gray-100">
+            <h2 class="text-xl font-bold mb-6 text-gray-700">Upload Tea Leaf Image</h2>
+            
+            <div id="dropZone" class="border-4 border-dashed border-gray-200 rounded-2xl p-12 text-center hover:border-green-400 transition-all cursor-pointer bg-gray-50">
+                <input type="file" id="fileInput" class="hidden" onchange="handleFile(this.files[0])">
+                <label for="fileInput" class="cursor-pointer">
+                    <i class="fas fa-cloud-upload-alt text-5xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 font-medium">Drag & Drop or <span class="text-green-600 underline">Browse Image</span></p>
+                    <p class="text-xs text-gray-400 mt-2 italic">Supported formats: JPG, PNG</p>
+                </label>
+            </div>
+
+            <div id="previewContainer" class="hidden mt-6 text-center relative">
+                <img id="imgPreview" class="mx-auto rounded-lg shadow-md max-h-64 border-4 border-white">
+                
+                <button onclick="resetUploadState()" 
+                        class="absolute -top-3 -right-3 bg-white text-gray-400 rounded-full w-8 h-8 flex items-center justify-center shadow-lg border-2 border-white hover:text-red-500 transition-colors z-10">
+                    <i class="fas fa-times-circle text-lg"></i>
+                </button>
+            </div>
+
+            <button onclick="simulateDetection()" id="btnDetect" class="w-full bg-green-600 text-white mt-8 py-4 rounded-xl font-black text-lg shadow-lg hover:bg-green-700 transform hover:-translate-y-1 transition-all uppercase tracking-widest">
+                Detect Disease
+            </button>
+        </div>
+
+        <div id="resultCard" class="flex-1 bg-white p-8 rounded-2xl shadow-md border border-gray-100 opacity-40">
+            <h2 class="text-xl font-bold mb-6 text-gray-700 border-b pb-4">Result</h2>
+            
+            <div id="loader" class="hidden text-center py-20">
+                <div class="animate-spin inline-block w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full mb-4"></div>
+                <p class="text-gray-500 animate-pulse">Analyzing leaf patterns...</p>
+            </div>
+
+            <div id="resultContent">
+                <div class="flex items-center gap-4 mb-6">
+                    <div id="diagnosis-icon-container" class="w-16 h-16 flex items-center justify-center rounded-2xl bg-gray-100 text-gray-400 transition-colors duration-300 shadow-sm shrink-0">
+                        <i id="diagnosis-icon" class="fas fa-leaf text-4xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm uppercase font-bold tracking-tighter">Diagnosis:</p>
+                        <h3 id="resClass" class="text-3xl font-black text-gray-300 italic">No Data</h3>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-bold text-gray-500">Confidence Score:</span>
+                        <span id="resConf" class="text-sm font-bold text-gray-400">0.0%</span>
+                    </div>
+                    <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden">
+                        <div id="resBar" class="bg-orange-500 h-full transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 p-6 rounded-xl border-l-8 border-green-500">
+                    <h4 class="font-bold text-green-800 mb-1">Advice:</h4>
+                    <p id="resAdvice" class="text-green-700 text-sm italic">Please upload an image first to get expert guidance.</p>
+                    
+                    <button onclick="openModal()" class="text-[10px] font-bold text-green-600 border border-green-200 px-3 py-1 rounded-full hover:bg-green-600 hover:text-white transition-all uppercase tracking-widest mt-2">
+                        Learn More <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                
+            <div class="mt-8 pt-6 border-t border-gray-100">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Class Probabilities:</h4>
+                <div id="probabilityBars" class="space-y-4">
+                    <!-- Grafik probabilitas akan muncul di sini via JavaScript -->
+                </div>
+            </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="max-w-6xl mx-auto px-4 pb-20">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-gray-50 px-8 py-4 border-b flex justify-between items-center">
+            <h3 class="font-bold text-gray-700 italic">
+                <i class="fas fa-history mr-2 text-green-600"></i> Recent Detection History
+            </h3>
+            <span class="text-xs text-gray-400">Auto-saved to session</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 text-xs uppercase text-gray-400">
+                    <tr>
+                        <th class="px-8 py-4">Date & Time</th>
+                        <th class="px-8 py-4">Diagnosis</th>
+                        <th class="px-8 py-4">Confidence</th>
+                        <th class="px-8 py-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody" class="text-sm text-gray-600">
+                    <tr id="emptyRow" class="border-t">
+                        <td colspan="4" class="px-8 py-10 text-center text-gray-400 italic">No detection history yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+    <script>
+        const diseaseDetails = {
+        "Algal leaf spot": {
+            cause: "Patogen Cephaleuros virescens (jenis alga hijau).",
+            symptoms: "Bercak-bercak menonjol berwarna oranye atau kemerahan pada permukaan daun teh.",
+            prevention: "Kurangi kelembapan kebun dengan pemangkasan rutin dan pastikan sirkulasi udara baik."
+        },
+        "Black Blight": {
+            cause: "Infeksi jamur pada kondisi lingkungan yang hangat dan sangat lembap.",
+            symptoms: "Terdapat area hitam pekat yang menyebar dengan cepat pada daun teh yang terinfeksi.",
+            prevention: "Gunakan fungisida yang tepat dan buang daun-daun yang sudah terinfeksi."
+        },
+        "Brown Blight": {
+            cause: "Jamur Colletotrichum spesies (sering menyerang daun tua).",
+            symptoms: "Bercak cokelat muda hingga tua, biasanya berawal dari tepi atau ujung daun.",
+            prevention: "Jaga sanitasi kebun teh, kumpulkan dan bakar daun-daun yang berguguran."
+        },
+        "Gray Blight": {
+            cause: "Jamur Pestalotiopsis theae.",
+            symptoms: "Bercak berwarna abu-abu pada daun dengan batas cokelat gelap di sekelilingnya.",
+            prevention: "Gunakan klon teh yang resisten dan perbaiki sistem drainase air di area perkebunan."
+        },
+        "Green Mirid Bug": {
+            cause: "Serangga hama penghisap cairan daun (Green Mirid Bug).",
+            symptoms: "Daun terlihat berlubang-lubang kecil atau bentuk daun mengerut dan tidak beraturan.",
+            prevention: "Kendalikan menggunakan insektisida nabati atau perangkap hama serangga."
+        },
+        "Healthy": {
+            cause: "Tanaman teh dalam kondisi optimal dan bebas dari patogen.",
+            symptoms: "Daun berwarna hijau cerah/tua yang merata, tekstur kuat, dan tidak ada bercak.",
+            prevention: "Pertahankan jadwal pemupukan yang seimbang dan lakukan pengecekan rutin."
+        },
+        "Red Scab": {
+            cause: "Infeksi jamur Elsinoe theae.",
+            symptoms: "Terdapat bercak-bercak kasar berwarna merah gelap atau keunguan pada sepanjang tulang daun.",
+            prevention: "Lakukan pemangkasan pada bagian tanaman yang sakit agar spora tidak menyebar."
+        },
+        "Red spot": {
+            cause: "Jamur patogen daun spesifik kelembapan tinggi.",
+            symptoms: "Titik-titik kecil berwarna merah terang yang tersebar di permukaan daun.",
+            prevention: "Penyemprotan fungisida berbahan aktif tembaga sesuai dosis anjuran."
+        },
+        "Spider Mite": {
+            cause: "Serangan tungau laba-laba merah atau kuning (Red/Yellow Spider Mite).",
+            symptoms: "Daun menjadi kusam, menguning kecokelatan, dan sering terdapat jaring halus di bawah daun.",
+            prevention: "Gunakan akarisida jika serangan parah, dan jaga agar kebun tidak terlalu kering/berdebu."
+        },
+        "White Spot": {
+            cause: "Infeksi awal jamur atau bakteri pada lingkungan dengan kabut tebal.",
+            symptoms: "Timbul bercak-bercak putih kecil berbintik pada helaian daun teh.",
+            prevention: "Atur jarak tanam agar tidak terlalu rapat untuk meminimalkan penumpukan kelembapan."
+        }
+    };
+    
+        let currentDiagnosis = "";
+
+        function handleFile(file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            
+            if (!file) return; 
+
+            if (!validTypes.includes(file.type)) {
+                alert("Waduh! Tolong upload file gambar (JPG/PNG) saja.");
+                document.getElementById('fileInput').value = ""; 
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('imgPreview');
+                img.src = e.target.result;
+                document.getElementById('previewContainer').classList.remove('hidden');
+                document.getElementById('dropZone').classList.add('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+
+        function resetUploadState() {
+            const fileInput = document.getElementById('fileInput');
+            fileInput.value = ""; 
+
+            const imgPreview = document.getElementById('imgPreview');
+            imgPreview.src = "";
+
+            document.getElementById('previewContainer').classList.add('hidden');
+            document.getElementById('dropZone').classList.remove('hidden');
+            document.getElementById('resultCard').classList.add('opacity-40');
+        }
+
+        async function simulateDetection() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) return alert("Pilih gambar dulu!");
+
+            const btn = document.getElementById('btnDetect');
+            const card = document.getElementById('resultCard');
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('resultContent');
+            const historyBody = document.getElementById('historyBody');
+            const emptyRow = document.getElementById('emptyRow');
+
+            card.classList.remove('opacity-40');
+            loader.classList.remove('hidden');
+            content.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerText = "Analyzing...";
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            try {
+                const response = await fetch("http://localhost:8000/predict", { method: "POST", body: formData });
+                const data = await response.json();
+
+                setTimeout(() => {
+                    currentDiagnosis = data.class;
+                    
+                    const probContainer = document.getElementById('probabilityBars');
+                    const iconContainer = document.getElementById('diagnosis-icon-container');
+                    const iconElement = document.getElementById('diagnosis-icon');
+
+                    iconContainer.className = "w-16 h-16 flex items-center justify-center rounded-2xl transition-colors duration-300 shadow-sm shrink-0";
+
+                    switch (data.class) {
+                        case "Healthy":
+                            iconContainer.classList.add("bg-green-100", "text-green-500");
+                            iconElement.className = "fas fa-check-circle text-4xl";
+                            break;
+                        case "Algal leaf spot":
+                            iconContainer.classList.add("bg-rose-100", "text-rose-500");
+                            iconElement.className = "fas fa-certificate text-4xl";
+                            break;
+                        case "Black Blight":
+                            iconContainer.classList.add("bg-zinc-200", "text-zinc-700");
+                            iconElement.className = "fas fa-disease text-4xl";
+                            break;
+                        case "Brown Blight":
+                            iconContainer.classList.add("bg-amber-100", "text-amber-600");
+                            iconElement.className = "fas fa-leaf text-4xl";
+                            break;
+                        case "Gray Blight":
+                            iconContainer.classList.add("bg-slate-200", "text-slate-500");
+                            iconElement.className = "fas fa-spa text-4xl";
+                            break;
+                        case "Green Mirid Bug":
+                            iconContainer.classList.add("bg-lime-100", "text-lime-600");
+                            iconElement.className = "fas fa-bug text-4xl";
+                            break;
+                        case "Red Scab":
+                            iconContainer.classList.add("bg-red-100", "text-red-600");
+                            iconElement.className = "fas fa-project-diagram text-4xl";
+                            break;
+                        case "Red spot":
+                            iconContainer.classList.add("bg-red-50", "text-red-500");
+                            iconElement.className = "fas fa-circle text-4xl";
+                            break;
+                        case "Spider Mite":
+                            iconContainer.classList.add("bg-orange-100", "text-orange-500");
+                            iconElement.className = "fas fa-spider text-4xl";
+                            break;
+                        case "White Spot":
+                            iconContainer.classList.add("bg-indigo-100", "text-indigo-400");
+                            iconElement.className = "fas fa-snowflake text-4xl";
+                            break;
+                        default: 
+                            iconContainer.classList.add("bg-gray-200", "text-gray-500");
+                            iconElement.className = "fas fa-question-circle text-4xl";
+                    }
+                    probContainer.innerHTML = ''; 
+
+                    if (data.probabilities) {
+                        Object.entries(data.probabilities)
+                            .sort(([, a], [, b]) => b - a)
+                            .forEach(([className, prob]) => {
+                                const percentage = (prob * 100).toFixed(1);
+                                const isWinner = className === data.class;
+                                
+                                const barHtml = `
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-[10px] font-bold ${isWinner ? 'text-green-600' : 'text-gray-400'} uppercase">${className}</span>
+                                            <span class="text-[10px] font-mono text-gray-400">${percentage}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                                            <div class="h-full transition-all duration-1000 ${isWinner ? 'bg-green-500' : 'bg-gray-300'}" 
+                                                style="width: ${percentage}%"></div>
+                                        </div>
+                                    </div>
+                                `;
+                                probContainer.insertAdjacentHTML('beforeend', barHtml);
+                            });
+                    }
+                    loader.classList.add('hidden');
+                    content.classList.remove('hidden');
+                    document.getElementById('resClass').innerText = data.class;
+                    document.getElementById('resConf').innerText = (data.confidence * 100).toFixed(1) + "%";
+                    document.getElementById('resBar').style.width = (data.confidence * 100) + "%";
+                    document.getElementById('resAdvice').innerText = data.advice;
+
+                    if (emptyRow) emptyRow.remove(); 
+
+                    const now = new Date().toLocaleString('id-ID'); 
+                    
+                    // Format tampilan status dinamis: Hijau jika sehat, Merah jika terinfeksi
+                    const statusHtml = data.status === "Clear" 
+                        ? `<span class="bg-green-100 text-green-600 px-2 py-1 rounded text-[10px] uppercase font-bold tracking-tighter">Clear</span>`
+                        : `<span class="bg-red-100 text-red-600 px-2 py-1 rounded text-[10px] uppercase font-bold tracking-tighter">Infected</span>`;
+                        
+                    const newRow = `
+                        <tr class="border-t hover:bg-gray-50 transition-colors animate-fade-in">
+                            <td class="px-8 py-4 font-mono text-xs">${now}</td>
+                            <td class="px-8 py-4 font-bold text-gray-800">${data.class}</td>
+                            <td class="px-8 py-4 text-orange-500 font-semibold">${(data.confidence * 100).toFixed(1)}%</td>
+                            <td class="px-8 py-4">
+                                ${statusHtml}
+                            </td>
+                        </tr>
+                    `;
+                    
+                    historyBody.insertAdjacentHTML('afterbegin', newRow);
+
+                    btn.disabled = false;
+                    btn.innerText = "Detect Disease";
+                }, 1500);
+            } catch (e) {
+                alert("Nyalakan main.py dulu bosku!");
+                btn.disabled = false;
+                btn.innerText = "Detect Disease";
+                loader.classList.add('hidden');
+            }
+        }
+
+        function openModal() {
+            if (!currentDiagnosis) {
+                alert("Deteksi gambar dulu bosku!");
+                return;
+            }
+            
+            // Ambil data penyakit dari dictionary
+            const detail = diseaseDetails[currentDiagnosis];
+            
+            if(detail) {
+                document.getElementById('modalCause').innerText = detail.cause;
+                document.getElementById('modalSymptoms').innerText = detail.symptoms;
+                document.getElementById('modalPrevention').innerText = detail.prevention;
+            } else {
+                document.getElementById('modalCause').innerText = "Data patogen belum tersedia.";
+                document.getElementById('modalSymptoms').innerText = "Data gejala belum tersedia.";
+                document.getElementById('modalPrevention').innerText = "Data pencegahan belum tersedia.";
+            }
+
+            document.getElementById('diseaseModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('diseaseModal').classList.add('hidden');
+        }
+    </script>
+
+    <div id="diseaseModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden animate-fade-in">
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 id="modalTitle" class="text-3xl font-black text-red-600 italic uppercase">Disease Detail</h2>
+                    <p class="text-gray-400 text-sm">Expert Guidance & Scientific Information</p>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex gap-4">
+                    <div class="bg-red-50 p-3 rounded-lg h-fit"><i class="fas fa-microscope text-red-600"></i></div>
+                    <div>
+                        <h4 class="font-bold text-gray-800">Penyebab (Pathogen)</h4>
+                        <p id="modalCause" class="text-gray-600 text-sm italic"></p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-orange-50 p-3 rounded-lg h-fit"><i class="fas fa-eye text-orange-600"></i></div>
+                    <div>
+                        <h4 class="font-bold text-gray-800">Gejala (Symptoms)</h4>
+                        <p id="modalSymptoms" class="text-gray-600 text-sm"></p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-green-50 p-3 rounded-lg h-fit"><i class="fas fa-shield-alt text-green-600"></i></div>
+                    <div>
+                        <h4 class="font-bold text-gray-800">Pencegahan (Prevention)</h4>
+                        <p id="modalPrevention" class="text-gray-600 text-sm"></p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeModal()" class="w-full mt-8 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition-all">
+                Close Information
+            </button>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+        
+        <div class="flex flex-col items-center md:items-start">
+            <img src="logo-binus.jpg" alt="Logo BINUS" 
+                class="h-16 w-auto object-contain" 
+                style="filter: drop-shadow(0px 0px 1px white) contrast(1.2);">
+            <p class="text-sm font-medium tracking-wide">
+                <span class="text-gray-400">Web Interface, Datasets & Backend by</span> 
+                <span class="text-white">Marvin Octavianus Salim Purnama</span> <br>
+                <span class="text-gray-400">AI Model by</span> 
+                <span class="text-white">Geraldan Ahmad Hafizh</span>
+            </p>
+            <p class="text-[10px] mt-1 opacity-50 uppercase tracking-widest">
+                Computer Science Student @ BINUS University
+            </p>
+        </div>
+
+        <div class="flex gap-6">
+            <a href="https://github.com/username-kamu" target="_blank" 
+               class="hover:text-white transition-all transform hover:scale-110">
+                <i class="fab fa-github text-2xl"></i>
+            </a>
+            <a href="https://linkedin.com/in/username-kamu" target="_blank" 
+               class="hover:text-blue-400 transition-all transform hover:scale-110">
+                <i class="fab fa-linkedin text-2xl"></i>
+            </a>
+            <a href="mailto:email-kamu@binus.ac.id" 
+               class="hover:text-green-400 transition-all transform hover:scale-110">
+                <i class="fas fa-envelope text-2xl"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 mt-8 pt-8 border-t border-gray-800 text-center">
+        <p class="text-[10px] opacity-40 uppercase tracking-[0.2em]">
+            © 2026 Tea AI Project • All Rights Reserved
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
