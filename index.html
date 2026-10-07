@@ -272,8 +272,10 @@
             formData.append("file", fileInput.files[0]);
 
             try {
-                const response = await fetch("http://localhost:8000/predict", { method: "POST", body: formData });
-                const data = await response.json();
+                const { Client } = await import("https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js");
+                const client = await Client.connect("kryptosX/Tea-Leaf-Detection");
+                const result = await client.predict("/predict", [formData.get('file')]);
+                const data = result.data[0];
 
                 setTimeout(() => {
                     currentDiagnosis = data.class;
