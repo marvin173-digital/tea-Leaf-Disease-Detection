@@ -1,7 +1,7 @@
 import { Client, handle_file } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
 /* ISI dengan alamat Space Hugging Face-mu, format "username/nama-space" */
-const SPACE = "USERNAME/NAMA-SPACE";
+const SPACE = "kryptosX/Backend-Tea-Leaf";
 
 const $ = i => document.getElementById(i);
 let file = null, mode = "visitor", hist = [];
