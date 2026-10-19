@@ -1,11 +1,27 @@
-{% extends "base.html" %}
-{% block hero %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tea Disease Detection</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="brand"><div class="logo">🍃</div><div><h1>Tea Disease Detection</h1><small>Cek kesehatan daun teh dengan AI</small></div></div>
+    <nav>
+      <a href="index.html" class="on">Detector</a>
+      <a href="catalog.html" class="">Katalog</a>
+    </nav>
+  </div>
+  
 <div class="hero"><h2>Kenali daun teh, nikmati tehnya.</h2><p>Foto selembar daun dari kebun, dan lihat apakah sehat, apa penyakitnya, serta cara pencegahannya.</p></div>
-{% endblock %}
 
-{% block content %}
+</header>
+<main>
 <div class="mode" id="mode"><button data-m="visitor" class="on">👋 Pengunjung</button><button data-m="staff">☕ Staf Kedai Teh</button></div>
-<div class="demo" id="demo">Mode demo: file model belum ditemukan di server, hasil hanya contoh acak.</div>
+<div class="demo" id="demo">Mode demo: alamat Space belum diisi di js/detector.js, hasil hanya contoh acak.</div>
 <div class="grid2">
   <div class="card">
     <h3>Upload Foto Daun Teh</h3>
@@ -26,13 +42,16 @@
       <div class="adv staff" id="rS" style="display:none"><h4>☕ Untuk Penyeduhan</h4><span id="rSd"></span></div>
       <div class="adv" id="rF" style="background:#eef5ff;border-color:#4a7bd1"><h4>🍵 Tahukah kamu?</h4><span id="rFd"></span></div>
       <div class="probs"><h5>CLASS PROBABILITIES</h5><div id="rP"></div></div>
-      <p class="note">Hasil berupa perkiraan model AI, bukan diagnosis resmi ahli tanaman. <a href="{{ url_for('catalog') }}">Lihat katalog penyakit</a></p>
+      <p class="note">Hasil berupa perkiraan model AI, bukan diagnosis resmi ahli tanaman. <a href="catalog.html">Lihat katalog penyakit</a></p>
     </div>
   </div>
 </div>
 <div class="card hist"><h3>Riwayat Deteksi Terbaru</h3>
   <table><thead><tr><th>WAKTU</th><th>DIAGNOSIS</th><th>CONFIDENCE</th><th>STATUS</th></tr></thead><tbody id="hb"></tbody></table>
 </div>
-{% endblock %}
-
-{% block scripts %}<script src="{{ url_for('static', filename='js/detector.js') }}"></script>{% endblock %}
+</main>
+<footer>Edukasi wisata kebun teh · Hasil AI bersifat perkiraan</footer>
+<script src="js/diseases.js"></script>
+<script type="module" src="js/detector.js"></script>
+</body>
+</html>

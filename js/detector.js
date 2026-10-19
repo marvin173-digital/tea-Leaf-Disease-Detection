@@ -1,3 +1,8 @@
+import { Client, handle_file } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+/* ISI dengan alamat Space Hugging Face-mu, format "username/nama-space" */
+const SPACE = "USERNAME/NAMA-SPACE";
+
 const $ = i => document.getElementById(i);
 let file = null, mode = "visitor", hist = [];
 try { hist = JSON.parse(localStorage.getItem("teaHist") || "[]"); } catch (e) {}
@@ -37,17 +42,24 @@ $('clr').onclick = () => {
   $('res').style.display = 'none'; $('empty').style.display = 'block';
 };
 
-/* kirim ke backend Flask */
+/* panggil backend Gradio di Hugging Face Space */
+let client = null;
+async function predictRemote(f) {
+  if (SPACE.startsWith("USERNAME")) {   // Space belum diisi -> mode demo (acak)
+    const r = D.map(() => Math.random() ** 4), s = r.reduce((x, y) => x + y);
+    return { demo: true, probs: Object.fromEntries(D.map((d, i) => [d.n, r[i] / s])) };
+  }
+  client = client || await Client.connect(SPACE);
+  const res = await client.predict("/predict", [handle_file(f)]);
+  return { demo: false, probs: res.data[0] };
+}
 $('go').onclick = async () => {
   $('go').disabled = true; $('go').textContent = 'Menganalisis…';
   try {
-    const fd = new FormData(); fd.append('image', file);
-    const r = await fetch('/predict', { method: 'POST', body: fd });
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.error || 'Terjadi kesalahan server');
-    $('demo').style.display = j.demo ? 'block' : 'none';
-    show(j.probabilities);
-  } catch (e) { alert('Deteksi gagal: ' + e.message); }
+    const { demo, probs } = await predictRemote(file);
+    $('demo').style.display = demo ? 'block' : 'none';
+    show(probs);
+  } catch (e) { alert('Deteksi gagal: ' + (e.message || e)); }
   $('go').textContent = 'Detect Disease'; $('go').disabled = false;
 };
 
