@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block hero %}
+<div class="hero"><h2>Kenali daun teh, nikmati tehnya.</h2><p>Foto selembar daun dari kebun, dan lihat apakah sehat, apa penyakitnya, serta cara pencegahannya.</p></div>
+{% endblock %}
+
+{% block content %}
+<div class="mode" id="mode"><button data-m="visitor" class="on">👋 Pengunjung</button><button data-m="staff">☕ Staf Kedai Teh</button></div>
+<div class="demo" id="demo">Mode demo: file model belum ditemukan di server, hasil hanya contoh acak.</div>
+<div class="grid2">
+  <div class="card">
+    <h3>Upload Foto Daun Teh</h3>
+    <label class="drop" id="drop" for="file"><b>📷 Ambil / pilih / seret foto</b><small>JPG atau PNG, satu daun saja</small></label>
+    <input id="file" type="file" accept="image/*" hidden>
+    <div class="pv" id="pv"><img id="img" alt="Foto daun"><button id="clr" title="Hapus">✕</button></div>
+    <button class="btn" id="go" disabled>Detect Disease</button>
+    <div class="tips"><b>💡 Tips foto yang bagus</b>Letakkan daun di latar polos (putih/terang), cahaya cukup, dan foto dari dekat sampai daun memenuhi bingkai.</div>
+  </div>
+  <div class="card">
+    <h3>Hasil Deteksi</h3>
+    <div id="empty" class="empty"><span>🌱</span>Belum ada hasil. Unggah foto daun lalu tekan <b>Detect Disease</b>.</div>
+    <div id="res" style="display:none">
+      <div class="diag"><div class="ico" id="rI"></div><div><small>DIAGNOSIS</small><h2 id="rN"></h2><span class="chip" id="rT"></span></div></div>
+      <div class="cf"><span>Confidence Score</span><span id="rC"></span></div>
+      <div class="bar"><i id="rB"></i></div>
+      <div class="adv" id="rA"><h4 id="rAh"></h4><span id="rAd"></span><ul id="rAl"></ul></div>
+      <div class="adv staff" id="rS" style="display:none"><h4>☕ Untuk Penyeduhan</h4><span id="rSd"></span></div>
+      <div class="adv" id="rF" style="background:#eef5ff;border-color:#4a7bd1"><h4>🍵 Tahukah kamu?</h4><span id="rFd"></span></div>
+      <div class="probs"><h5>CLASS PROBABILITIES</h5><div id="rP"></div></div>
+      <p class="note">Hasil berupa perkiraan model AI, bukan diagnosis resmi ahli tanaman. <a href="{{ url_for('catalog') }}">Lihat katalog penyakit</a></p>
+    </div>
+  </div>
+</div>
+<div class="card hist"><h3>Riwayat Deteksi Terbaru</h3>
+  <table><thead><tr><th>WAKTU</th><th>DIAGNOSIS</th><th>CONFIDENCE</th><th>STATUS</th></tr></thead><tbody id="hb"></tbody></table>
+</div>
+{% endblock %}
+
+{% block scripts %}<script src="{{ url_for('static', filename='js/detector.js') }}"></script>{% endblock %}

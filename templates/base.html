@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Tea Disease Detection{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="brand"><div class="logo">🍃</div><div><h1>Tea Disease Detection</h1><small>Cek kesehatan daun teh dengan AI</small></div></div>
+    <nav>
+      <a href="{{ url_for('index') }}" class="{{ 'on' if active == 'detector' }}">Detector</a>
+      <a href="{{ url_for('catalog') }}" class="{{ 'on' if active == 'catalog' }}">Katalog</a>
+    </nav>
+  </div>
+  {% block hero %}{% endblock %}
+</header>
+<main>{% block content %}{% endblock %}</main>
+<footer>Edukasi wisata kebun teh · Hasil AI bersifat perkiraan</footer>
+<script src="{{ url_for('static', filename='js/diseases.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
