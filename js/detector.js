@@ -88,10 +88,26 @@ function show(pr) {
   if (innerWidth < 760) $('res').scrollIntoView({ behavior: 'smooth' });
 }
 
+function saveHist() { try { localStorage.setItem("teaHist", JSON.stringify(hist)); } catch (e) {} }
+
 function renderHist() {
-  $('hb').innerHTML = hist.length ? hist.map(h => {
+  $('clrHist').disabled = !hist.length;
+  $('hb').innerHTML = hist.length ? hist.map((h, i) => {
     const l = LV[h.lv];
-    return `<tr><td>${h.t}</td><td><b>${h.n}</b></td><td style="color:${l[0]};font-weight:700">${h.c}%</td><td><span class="chip" style="background:${l[2]};color:${l[3]}">${l[1]}</span></td></tr>`;
-  }).join('') : '<tr><td colspan="4" style="color:#667561">Belum ada riwayat.</td></tr>';
+    return `<tr><td>${h.t}</td><td><b>${h.n}</b></td><td style="color:${l[0]};font-weight:700">${h.c}%</td><td><span class="chip" style="background:${l[2]};color:${l[3]}">${l[1]}</span></td><td><button class="del" data-i="${i}" title="Hapus baris ini">🗑</button></td></tr>`;
+  }).join('') : '<tr><td colspan="5" style="color:#667561">Belum ada riwayat.</td></tr>';
 }
+
+/* hapus satu baris */
+$('hb').onclick = e => {
+  const b = e.target.closest('.del'); if (!b) return;
+  hist.splice(+b.dataset.i, 1); saveHist(); renderHist();
+};
+/* hapus semua riwayat */
+$('clrHist').onclick = () => {
+  if (!hist.length || !confirm('Hapus semua riwayat deteksi?')) return;
+  hist = [];
+  try { localStorage.removeItem("teaHist"); } catch (e) {}
+  renderHist();
+};
 renderHist();
